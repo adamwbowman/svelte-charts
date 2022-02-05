@@ -14,11 +14,47 @@
 	};
 
 // working
+import { scaleLinear } from 'd3-scale';
 
+const xTicks = [1990, 1995, 2000, 2005, 2010, 2015];
+const yTicks = [0, 5, 10, 15, 20];
+const padding = { top: 20, right: 15, bottom: 20, left: 25 }
+let width = 500;
+let height = 200;
 
+$: xScale = scaleLinear()
+	// .domain([0, xTicks.length])
+	// .range([padding.left, width - padding.right]);
+	.domain([0, 6])
+	.range([25, 485]);
+
+$: yScale = scaleLinear()
+	// .domain([0, Math.max.apply(null, yTicks)])
+	// .range([height - padding.bottom, padding.top]);
+	.domain([0, Math.max.apply(null, yTicks)])
+	.range([180, 20])
+
+// let scale = d3.scaleLinear()
+	// .domain([0, 100])
+	// .range([0, 500]);
+// let axis = d3.axisBottom(scale);
+
+// d3.select('svg g')
+// 	.call(axis);
 </script>
 
 <main>
+<svg width="600" height="100">
+	<g class="axis y-axis">
+		{#each yTicks as tick}
+		<g class="tick tick-{tick}" 
+		transform="translate(0, {yScale(tick)})">
+			<line x2="100%"></line>
+			<text y="-4">x</text>
+		</g>
+		{/each}
+	</g>
+</svg>
 <!-- working -->
 	<div class="chart">
 		<svg>
@@ -40,9 +76,20 @@
 			</g>
 
 		</svg>
-	</div>
-
-	<hr />
+	</div><hr>
+<!-- gray boxes -->
+	<svg width="800" height="200">
+		<g transform="translate(70, 20)">
+			<rect width="15" height="15" x="0" y="0"></rect>
+			<rect width="15" height="15" x="0" y="20"></rect>
+			<rect width="15" height="15" x="0" y="40"></rect>
+			<rect width="15" height="15" x="0" y="60"></rect>
+			<rect width="15" height="15" x="20" y="0"></rect>
+			<rect width="15" height="15" x="20" y="20"></rect>
+			<rect width="15" height="15" x="20" y="40"></rect>
+			<rect width="15" height="15" x="20" y="60"></rect>
+		</g>
+	</svg><hr />
 <!-- cirlce -->
 	<svg width="400" height="100">
 	{#each circleData as d}
@@ -102,6 +149,40 @@
 			<path stroke-dasharray="20,10,5,5,5,10" d="M5 60 l215 0" />
 		</g>
 	</svg><hr />
+<!-- marker -->
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<!-- arrowhead marker definition -->
+		<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+		markerWidth="6" markerHeight="6"
+		orient="auto-start-reverse">
+			<path d="M 0 0 L 10 5 L 0 10 z" />
+		</marker>
+		<!-- simple dot marker definition -->
+		<marker id="dot" viewBox="0 0 10 10" refX="5" refY="5"
+		markerWidth="5" markerHeight="5">
+			<circle cx="5" cy="5" r="5" fill="red" />
+		</marker>
+	</defs>
+	<!-- Coordinate axes with a arrowhead in both direction -->
+	<polyline points="10,10 10,90 90,90" fill="none" stroke="black"
+	marker-start="url(#arrow)" marker-end="url(#arrow)" />
+	<!-- Data line with polymarkers -->
+	<polyline points="15,80 29,50 43,60 57,30 71,40 85,15" fill="none" stroke="grey"
+	marker-start="url(#dot)" marker-mid="url(#dot)"  marker-end="url(#dot)" />
+</svg><hr>
+<!-- mask -->
+	<svg viewBox="-10 -10 120 120">
+		<mask id="myMask">
+			<!-- Everything under a white pixel will be visible -->
+			<rect x="0" y="0" width="100" height="100" fill="white" />
+			<!-- Everything under a black pixel will be invisible -->
+			<path d="M10,35 A20,20,0,0,1,50,35 A20,20,0,0,1,90,35 Q90,65,50,95 Q10,65,10,35 Z" fill="black" />
+		</mask>
+		<polygon points="-10,110 110,110 110,-10" fill="orange" />
+		<!-- with this mask applied, we "punch" a heart shape hole into the circle -->
+		<circle cx="50" cy="50" r="50" mask="url(#myMask)" />
+	</svg><hr>
 <!-- tweening -->
 	<button on:click={setFoo}>Foo</button>
 	<button on:click={setBar}>Bar</button>
@@ -115,24 +196,46 @@
 
 <style>
 /* working */
+rect {
+	fill: #ddd;
+}
 	.chart {
-			width: 100%;
-			max-width: 500px;
-			margin: 0 auto;
-		}
-		svg {
-			position: relative;
-			width: 100%;
-			height: 200px;
-		}
-		.tick {
-			font-family: Helvetica, Arial;
-			font-size: .725em;
-			font-weight: 200;
-		}
+		width: 100%;
+		max-width: 500px;
+		margin: 0 auto;
+	}
+	svg {
+		position: relative;
+		width: 100%;
+		height: 200px;
+	}
+	.tick {
+		font-family: Helvetica, Arial;
+		font-size: .725em;
+		font-weight: 200;
+	}
+	.tick line {
+		stroke: #e2e2e2;
+		stroke-dasharray: 2;
+	}
+	.tick text {
+		fill: #ccc;
+		text-anchor: start;
+	}
+	.tick.tick-0 line {
+		stroke-dasharray: 0;
+	}
+	.x-axis .tick text {
+		text-anchor: middle;
+	}
+
+	.bars rect {
+		fill: #a11;
+		stroke: none;
+		opacity: 0.65;
+	}
 
 
-		
 	@media (min-width: 640px) {
 		main {
 			max-width: none;
