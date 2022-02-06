@@ -32,30 +32,32 @@ let width = 500;
 let height = 200;
 
 $: xScale = scaleLinear()
-	// .domain([0, xTicks.length])
-	// .range([padding.left, width - padding.right]);
-	.domain([0, 6])
-	.range([25, 485]);
+	.domain([0, xTicks.length])
+	.range([padding.left, width - padding.right]);
+	// .domain([0, 6])
+	// .range([25, 485]);
 
 $: yScale = scaleLinear()
-	// .domain([0, Math.max.apply(null, yTicks)])
-	// .range([height - padding.bottom, padding.top]);
-	.domain([0, 20])
-	.range([180, 20])
+	.domain([0, Math.max.apply(null, yTicks)])
+	.range([height - padding.bottom, padding.top]);
+	// .domain([0, 20])
+	// .range([180, 20])
 
 $: innerWidth = width - (padding.left + padding.right);
 $: barWidth = innerWidth / xTicks.length;
 </script>
 
 <main>
-<svg width="600" height="100">
+<!-- working -->
+<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
+<svg>
 	<!-- y axis -->
 	<g class="axis y-axis">
 		{#each yTicks as tick}
 		<g class="tick tick-{tick}" 
 		transform="translate(0, {yScale(tick)})">
 			<line x2="100%"></line>
-			<text y="-4">x</text>
+			<text y="-4">{tick} {tick === 20 ? ' per 1,000 poputlion' : ''}</text>
 		</g>
 		{/each}
 	</g>
@@ -64,33 +66,22 @@ $: barWidth = innerWidth / xTicks.length;
 		{#each points as point, i}
 			<g class="tick" 
 			transform="translate({xScale(i)},{height})">
-				<text x="{barWidth/2}" y="-4">{width}</text>
+				<text x="{barWidth/2}" y="-4">{point.year}</text>
 			</g>
 		{/each}
 	</g>
+	<g class='bars'>
+		{#each points as point, i}
+			<rect
+				x="{xScale(i) + 2}"
+				y="{yScale(point.birthrate)}"
+				width="{barWidth - 4}"
+				height="{yScale(0) - yScale(point.birthrate)}"
+			></rect>
+		{/each}
+	</g>
 </svg>
-<!-- working -->
-	<div class="chart">
-		<svg>
-			<!-- y axis -->
-			<g class="axis y-axis">
-				<g class="tick">
-					<line x2="100%"></line>
-					<text y="-4"></text>
-				</g>
-			</g>
-			<g class="axis x-axis">
-				<g class="tick">
-					<line x2="100%" transform=""></line>
-					<text x="" y="-4"></text>
-				</g>
-			</g>
-			<g class="bars">
-				<rect x="" y="" width="" height=""></rect>
-			</g>
-
-		</svg>
-	</div><hr>
+</div><hr>
 <!-- gray boxes -->
 	<svg width="800" height="200">
 		<g transform="translate(70, 20)">
