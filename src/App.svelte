@@ -16,6 +16,15 @@
 // working
 import { scaleLinear } from 'd3-scale';
 
+const points = [
+	{ year: 1990, birthrate: 16.7 },
+	{ year: 1995, birthrate: 14.6 },
+	{ year: 2000, birthrate: 14.4 },
+	{ year: 2005, birthrate: 14 },
+	{ year: 2010, birthrate: 13 },
+	{ year: 2015, birthrate: 12.4 }
+];
+
 const xTicks = [1990, 1995, 2000, 2005, 2010, 2015];
 const yTicks = [0, 5, 10, 15, 20];
 const padding = { top: 20, right: 15, bottom: 20, left: 25 }
@@ -31,20 +40,16 @@ $: xScale = scaleLinear()
 $: yScale = scaleLinear()
 	// .domain([0, Math.max.apply(null, yTicks)])
 	// .range([height - padding.bottom, padding.top]);
-	.domain([0, Math.max.apply(null, yTicks)])
+	.domain([0, 20])
 	.range([180, 20])
 
-// let scale = d3.scaleLinear()
-	// .domain([0, 100])
-	// .range([0, 500]);
-// let axis = d3.axisBottom(scale);
-
-// d3.select('svg g')
-// 	.call(axis);
+$: innerWidth = width - (padding.left + padding.right);
+$: barWidth = innerWidth / xTicks.length;
 </script>
 
 <main>
 <svg width="600" height="100">
+	<!-- y axis -->
 	<g class="axis y-axis">
 		{#each yTicks as tick}
 		<g class="tick tick-{tick}" 
@@ -52,6 +57,15 @@ $: yScale = scaleLinear()
 			<line x2="100%"></line>
 			<text y="-4">x</text>
 		</g>
+		{/each}
+	</g>
+	<!-- x axis -->
+	<g class="axis x-axis">
+		{#each points as point, i}
+			<g class="tick" 
+			transform="translate({xScale(i)},{height})">
+				<text x="{barWidth/2}" y="-4">{width}</text>
+			</g>
 		{/each}
 	</g>
 </svg>
