@@ -14,18 +14,48 @@
 	};
 
 // working
+import { scaleLinear } from 'd3-scale';
+import { gridData } from "./data.js";
+
+const padding = {top:20,right:40,bottom:40,left:25};
+let width = 150, height = 150;
 const xxTicks = [0, 4, 8, 12, 16, 20];
 const yyTicks = [0, 2, 4, 6, 8, 10, 12];
+$: xScale = scaleLinear().domain([0,20]).range([padding.left, width-padding.right]);
+$: yScale = scaleLinear().domain([0,12]).range([height-padding.bottom, padding.top]);
 </script>
 
 <main>
 <!-- working -->
-<svg width='150' height='150' preserveAspectRatio='none'>
+<svg width='150' height='150' style='background-color:red' preserveAspectRatio='none'>
+	<g fill="blue">
+		<rect x="10" y="10" height="100" width="100" transform="translate(0,0)"
+		style="stroke:green; fill:yellow"/>
+	</g>
+</svg>
+<svg width={width} height={height} style='background-color:yellow'>
 
-<rect x="10" y="10" height="100" width="100"
-style="stroke:#ff0000; fill: #0000ff"/>
+	<g class="x-axis">
+		{#each xxTicks as tick}
+		<g transform="translate(0, {yScale(tick)})">
+			<line x1="{padding.left}" x2="{xScale(22)}" stroke="black" />
+		</g>
+		{/each}
+	</g>
+	<g class="y-axis">
+		{#each xxTicks as tick}
+		<g transform="translate({xScale(tick)},0)">
+			<line y1="{yScale(0)}" y2="{yScale(13)}" stroke="black" />
+		</g>
+		{/each}
+	</g>
+	{#each gridData as point}
+		<circle cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='5'/>
+	{/each}
 
-</svg><hr />
+
+</svg>
+<hr />
 <!-- gray boxes -->
 	<svg width="800" height="200">
 		<g transform="translate(70, 20)">
