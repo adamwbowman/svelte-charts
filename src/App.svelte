@@ -23,6 +23,10 @@ const xxTicks = [0, 4, 8, 12, 16, 20];
 const yyTicks = [0, 2, 4, 6, 8, 10, 12];
 $: xScale = scaleLinear().domain([0,20]).range([padding.left, width-padding.right]);
 $: yScale = scaleLinear().domain([0,12]).range([height-padding.bottom, padding.top]);
+
+import {extent} from 'd3-array';
+
+console.log(extent(gridData, (d) => d.y));
 </script>
 
 <main>
